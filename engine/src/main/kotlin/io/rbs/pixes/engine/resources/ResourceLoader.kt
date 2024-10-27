@@ -1,8 +1,8 @@
 package io.rbs.pixes.engine.resources
 
+import io.rbs.pixes.engine.PaintedResource
 import io.rbs.pixes.engine.getGameDir
 import java.awt.Dimension
-import java.awt.Graphics
 import java.util.LinkedHashMap
 
 
@@ -14,15 +14,11 @@ class LRUCache<KeyT, ValT>(private val cap: Int, loadFactor: Float, accessOrder:
     }
 }
 
-interface Resource {
-    fun paint(gfx: Graphics)
-}
-
 class ResourceLoader {
     companion object {
-        private val graphicsCache = LRUCache<String, Resource>(1024, .75F, true)
+        private val graphicsCache = LRUCache<String, PaintedResource>(1024, .75F, true)
 
-        fun loadImage(name: String, size: Dimension): Resource {
+        fun loadImage(name: String, size: Dimension): PaintedResource {
             val path = "${getGameDir()}/$name"
             var res = graphicsCache[path]
             if (res != null) {
@@ -31,8 +27,30 @@ class ResourceLoader {
 
             println("loading resource $path")
 
-            res = ImageResource(path, size)
+            res = ImagePaintedResource(path, size)
             graphicsCache[path] = res
+
+            return res
+        }
+
+        fun loadAnimatedSprite(
+            name: String,
+            size: Dimension,
+            rate: Int,
+            frames: Int,
+        ): PaintedResource {
+            val path = "${getGameDir()}/$name"
+            val cacheKey = "$path:$rate@$frames"
+
+            var res = graphicsCache[cacheKey]
+            if (res != null) {
+                return res
+            }
+
+            println("loading resource $path")
+
+            res = AnimatedSpriteResource(path, size, rate, frames)
+            graphicsCache[cacheKey] = res
 
             return res
         }

@@ -2,16 +2,17 @@ package io.rbs.pixes.engine
 
 import io.rbs.pixes.engine.errors.AddEntityError
 import io.rbs.pixes.engine.errors.RemoveEntityError
+import java.awt.Component
 import java.awt.Dimension
 import java.awt.Graphics
 import java.io.FileReader
 import java.io.Reader
 import java.util.*
 
-class Level(levelName: String) {
+class Level(levelName: String) : Component(), PaintedResource {
 
-    val entities: Map<String, Entity> = mutableMapOf()
-    var terrain: Array<Array<Tile>>
+    private val entities: MutableMap<String, Entity> = mutableMapOf()
+    private var terrain: Array<Array<Tile>>
 
     init {
         val baseName = "${getGameDir()}/$levelName"
@@ -29,8 +30,7 @@ class Level(levelName: String) {
             levelProps.getProperty("width").toInt(),
         )
 
-        var tilePropsMap: Map<String, TileOptions> = mutableMapOf()
-
+        val tilePropsMap: MutableMap<String, TileOptions> = mutableMapOf()
         levelProps.forEach { (k, v) ->
             val key = k.toString()
             val value = v.toString()
@@ -53,7 +53,7 @@ class Level(levelName: String) {
                 "sprite" -> tileOption.sprite = value
             }
 
-            tilePropsMap = tilePropsMap.plus(Pair(id, tileOption))
+            tilePropsMap[id] = tileOption
         }
 
         val terrainFile = "$baseName.trn"
@@ -66,7 +66,7 @@ class Level(levelName: String) {
             throw AddEntityError(entity, "entity exists")
         }
 
-        this.entities.plus(Pair(entity.id, entity))
+        this.entities[entity.id] = entity
     }
 
     fun removeEntity(entity: Entity) {
@@ -74,18 +74,25 @@ class Level(levelName: String) {
             throw RemoveEntityError(entity, "entity doesn't exists")
         }
 
-        this.entities.minus(entity.id)
+        this.entities.remove(entity.id)
     }
 
-    fun paint(gfx: Graphics) {
+    override fun paint(gfx: Graphics, interpolation: Double) {
         for (tileRow in terrain) {
             for (tile in tileRow) {
-                println("painting ${tile.tClass} tile at ${tile.posX},${tile.posY} -> ${tile.size.height}x${tile.size.width}")
-
                 val newGfx = gfx.create(tile.posX, tile.posY, tile.size.width, tile.size.height)
                 tile.paint(newGfx)
             }
         }
+
+        this.entities.forEach { (id, ent) ->
+//            val newGfx = gfx.create(ent.posX, ent.posY, ent.size.width, ent.size.height)
+            ent.paint(gfx, interpolation)
+        }
+    }
+
+    fun nextTick() {
+        this.entities.forEach { it.value.nextTick() }
     }
 
     private fun loadTerrain(

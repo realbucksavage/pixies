@@ -1,12 +1,13 @@
 package io.rbs.pixes.engine.resources
 
+import io.rbs.pixes.engine.PaintedResource
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Image
 import java.io.FileInputStream
 import javax.imageio.ImageIO
 
-class ImageResource(path: String, private val size: Dimension) : Resource {
+class ImagePaintedResource(path: String, private val size: Dimension) : PaintedResource {
 
     private val image: Image
 
@@ -16,8 +17,7 @@ class ImageResource(path: String, private val size: Dimension) : Resource {
         }
     }
 
-
-    override fun paint(gfx: Graphics) {
+    override fun paint(gfx: Graphics, interpolation: Double) {
         gfx.drawImage(this.image, 0, 0, size.width, size.height, null, null)
     }
 }
