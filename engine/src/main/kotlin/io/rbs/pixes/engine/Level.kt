@@ -5,6 +5,7 @@ import io.rbs.pixes.engine.errors.RemoveEntityError
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Graphics
+import java.awt.Point
 import java.io.FileReader
 import java.io.Reader
 import java.util.*
@@ -14,21 +15,30 @@ class Level(levelName: String) : Component(), PaintedResource {
     private val entities: MutableMap<String, Entity> = mutableMapOf()
     private var terrain: Array<Array<Tile>>
 
+    private val tileDimension: Dimension
+    private val levelDimension: Dimension
+
+    val center: Point
+
     init {
         val baseName = "${getGameDir()}/$levelName"
 
         val levelProps = Properties()
         FileReader("$baseName.properties").use { levelProps.load(it) }
 
-        val tileDimension = Dimension(
+        tileDimension = Dimension(
             levelProps.getProperty("tileHeight").toInt(),
             levelProps.getProperty("tileWidth").toInt(),
         )
 
-        val levelDimension = Dimension(
+        levelDimension = Dimension(
             levelProps.getProperty("height").toInt(),
             levelProps.getProperty("width").toInt(),
         )
+
+        val heightTotal = tileDimension.height * levelDimension.height
+        val widthTotal = tileDimension.width * levelDimension.width
+        center = Point(widthTotal / 2, heightTotal / 2)
 
         val tilePropsMap: MutableMap<String, TileOptions> = mutableMapOf()
         levelProps.forEach { (k, v) ->
@@ -80,14 +90,14 @@ class Level(levelName: String) : Component(), PaintedResource {
     override fun paint(gfx: Graphics, interpolation: Double) {
         for (tileRow in terrain) {
             for (tile in tileRow) {
-                val newGfx = gfx.create(tile.posX, tile.posY, tile.size.width, tile.size.height)
+                val newGfx = gfx.create(tile.pos.x, tile.pos.y, tile.size.width, tile.size.height)
                 tile.paint(newGfx)
             }
         }
 
         this.entities.forEach { (id, ent) ->
-//            val newGfx = gfx.create(ent.posX, ent.posY, ent.size.width, ent.size.height)
-            ent.paint(gfx, interpolation)
+            val newGfx = gfx.create(ent.pos.x, ent.pos.y, ent.size.width, ent.size.height)
+            ent.paint(newGfx, interpolation)
         }
     }
 
@@ -118,8 +128,7 @@ class Level(levelName: String) : Component(), PaintedResource {
                 val tile = tiles[i]
                 val tileOption = tilePropsMap[tileClass]
 
-                tile.posX = i * tileDimension.width
-                tile.posY = posY
+                tile.pos = Point(i * tileDimension.width, posY)
                 tile.tClass = tileClass
                 tile.tOptions = tileOption
             }

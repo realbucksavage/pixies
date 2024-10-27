@@ -3,12 +3,12 @@ package io.rbs.pixes.engine
 import io.rbs.pixes.engine.resources.ResourceLoader
 import java.awt.Dimension
 import java.awt.Graphics
+import java.awt.Point
 
 class Tile(val size: Dimension) {
     private var resource: PaintedResource? = null
 
-    var posX: Int = 0
-    var posY: Int = 0
+    var pos: Point = Point(0, 0)
 
     var tClass: String? = null
 
