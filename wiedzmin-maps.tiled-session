@@ -1,0 +1,32 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "wiedzmin",
+        ".",
+        "wiedzmin/levels"
+    ],
+    "fileStates": {
+        "wiedzmin/levels/KaerMohrenTileset.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.125,
+            "scaleInEditor": 0.125
+        }
+    },
+    "last.imagePath": "D:/IdeaProjects/pixies/wiedzmin/resources/Objects/Ruins",
+    "map.height": 32,
+    "map.width": 32,
+    "mapScene.enableWorlds": true,
+    "openFiles": [
+        "wiedzmin/levels/KaerMohrenTileset.tsx"
+    ],
+    "project": "wiedzmin-maps.tiled-project",
+    "recentFiles": [
+        "wiedzmin/levels/KaerMohrenTileset.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 1
+}

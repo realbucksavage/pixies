@@ -2,6 +2,7 @@ package io.rbs.pixes.engine
 
 import io.rbs.pixes.engine.errors.AddEntityError
 import io.rbs.pixes.engine.errors.RemoveEntityError
+import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Graphics
@@ -21,6 +22,7 @@ class Level(levelName: String) : Component(), PaintedResource {
     val center: Point
 
     init {
+        this.background = Color.GRAY
         val baseName = "${getGameDir()}/$levelName"
 
         val levelProps = Properties()

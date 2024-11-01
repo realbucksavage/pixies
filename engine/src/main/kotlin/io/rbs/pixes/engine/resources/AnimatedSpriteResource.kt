@@ -11,7 +11,8 @@ class AnimatedSpriteResource(
     path: String,
     private val size: Dimension,
     private val rate: Int,
-    private val frames: Int
+    private val frames: Int,
+    private val delta: Int,
 ) : PaintedResource {
 
     private val image: Image
@@ -32,7 +33,7 @@ class AnimatedSpriteResource(
             paintCounter = 0  // Reset the counter
         }
 
-        val offsetX = currentFrame * size.width
+        val offsetX = currentFrame * delta
 
         gfx.drawImage(
             this.image,
@@ -42,7 +43,7 @@ class AnimatedSpriteResource(
             size.height,
             offsetX,
             0,
-            offsetX + size.width,
+            offsetX + delta,
             size.height,
             null
         )

@@ -10,9 +10,13 @@ open class Entity(val id: String) : PaintedResource, TickAware {
     var size: Dimension = Dimension(0, 0)
 
     var displayResource: PaintedResource? = null
+        set(value) {
+            value?.reset()
+            field = value
+        }
 
     override fun paint(gfx: Graphics, interpolation: Double) {
-        // does nothing
+        displayResource?.paint(gfx, interpolation)
     }
 
     override fun nextTick() {

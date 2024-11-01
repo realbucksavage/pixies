@@ -38,9 +38,10 @@ class ResourceLoader {
             size: Dimension,
             rate: Int,
             frames: Int,
+            delta: Int,
         ): PaintedResource {
             val path = "${getGameDir()}/$name"
-            val cacheKey = "$path:$rate@$frames"
+            val cacheKey = "$path:$rate@$frames+$delta"
 
             var res = graphicsCache[cacheKey]
             if (res != null) {
@@ -49,7 +50,7 @@ class ResourceLoader {
 
             println("loading resource $path")
 
-            res = AnimatedSpriteResource(path, size, rate, frames)
+            res = AnimatedSpriteResource(path, size, rate, frames, delta)
             graphicsCache[cacheKey] = res
 
             return res

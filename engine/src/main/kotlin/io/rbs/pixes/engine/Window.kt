@@ -16,7 +16,7 @@ class Window(private val device: GraphicsDevice) : JFrame() {
 
     private var tickRate: Int = 50
     private var maxFrameSkip: Int = 10
-    private var skipTicks = 1000 / tickRate;
+    private var skipTicks = 1000 / tickRate
 
     private var gameLoopRunning = false
     private var interpolation: Double = 0.0
@@ -44,12 +44,16 @@ class Window(private val device: GraphicsDevice) : JFrame() {
         contentPane.add(comp)
         this.currentLevel = level
         this.mainComponent = comp
+        level.keyListeners.forEach { this.addKeyListener(it) }
+        level.mouseListeners.forEach { this.addMouseListener(it) }
     }
 
     fun unloadLevel() {
         contentPane.removeAll()
         this.currentLevel = null
         this.mainComponent = null
+        this.keyListeners.forEach { this.removeKeyListener(it) }
+        this.mouseListeners.forEach { this.removeMouseListener(it) }
     }
 
     fun runGameLoop() {
@@ -59,6 +63,7 @@ class Window(private val device: GraphicsDevice) : JFrame() {
 
         val gameThread = Thread {
             while (this.gameLoopRunning) {
+                loops = 0
                 while (System.currentTimeMillis() > nextGameTick && loops < this.maxFrameSkip) {
                     nextTick()
                     nextGameTick += skipTicks
@@ -86,7 +91,6 @@ class Window(private val device: GraphicsDevice) : JFrame() {
     private class InterpolatedComponent(private var paintedResource: PaintedResource, private var window: Window) :
         Component() {
         override fun paint(g: Graphics) {
-            println("painting with interpolation ${window.interpolation}")
             paintedResource.paint(g, window.interpolation)
         }
     }
